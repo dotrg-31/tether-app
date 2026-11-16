@@ -75,3 +75,7 @@ encoding. Quitting removes the virtual display.
 - `Shared/`: wire protocol and H.264 helpers used by both.
 - `design/`: icon sources (SVG).
 - `scripts/`: build and install scripts.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
