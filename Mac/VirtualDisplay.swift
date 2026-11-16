@@ -8,13 +8,15 @@ final class VirtualDisplay {
     let pointWidth: Int
     let pointHeight: Int
 
-    /// - Parameters: point size of the display; it is created in HiDPI (2x) mode.
-    init?(name: String, pointWidth: Int, pointHeight: Int, diagonalInches: Double, serial: UInt32 = 1) {
+    /// - Parameters: point size of the display. `retina` renders it at 2x (sharp); otherwise 1x,
+    ///   which has a quarter of the pixels for macOS to draw and capture.
+    init?(name: String, pointWidth: Int, pointHeight: Int, diagonalInches: Double, retina: Bool = true, serial: UInt32 = 1) {
+        let scale = retina ? 2 : 1
         let desc = CGVirtualDisplayDescriptor()
         desc.setDispatchQueue(DispatchQueue.main)
         desc.name = name
-        desc.maxPixelsWide = UInt32(pointWidth * 2)
-        desc.maxPixelsHigh = UInt32(pointHeight * 2)
+        desc.maxPixelsWide = UInt32(pointWidth * scale)
+        desc.maxPixelsHigh = UInt32(pointHeight * scale)
         let aspect = Double(pointWidth) / Double(pointHeight)
         let heightIn = diagonalInches / (1 + aspect * aspect).squareRoot()
         desc.sizeInMillimeters = CGSize(width: heightIn * aspect * 25.4, height: heightIn * 25.4)
@@ -25,18 +27,18 @@ final class VirtualDisplay {
 
         guard let d = CGVirtualDisplay(descriptor: desc) else { return nil }
         let settings = CGVirtualDisplaySettings()
-        settings.hiDPI = 1
+        settings.hiDPI = retina ? 1 : 0
         // With hiDPI on, macOS offers the mode at half the given pixel size as a Retina mode.
-        settings.modes = [
+        settings.modes = retina ? [
             CGVirtualDisplayMode(width: UInt(pointWidth * 2), height: UInt(pointHeight * 2), refreshRate: 60),
             CGVirtualDisplayMode(width: UInt(pointWidth), height: UInt(pointHeight), refreshRate: 60),
-        ]
+        ] : [CGVirtualDisplayMode(width: UInt(pointWidth), height: UInt(pointHeight), refreshRate: 60)]
         guard d.apply(settings) else { return nil }
         display = d
         displayID = d.displayID
         self.pointWidth = pointWidth
         self.pointHeight = pointHeight
-        selectRetinaMode()
+        if retina { selectRetinaMode() }
     }
 
     /// Prefer the HiDPI mode whose point size matches the iPad.

@@ -40,6 +40,10 @@ two-finger tap = right click, two-finger drag = scroll, trackpad or Pencil hover
 
 The menu bar menu shows live frame rate, bandwidth and encoder type, and has a **Start at Login** option.
 
+**Quality** (menu bar > Quality): *Sharp* is Retina at 60 fps; *Balanced* (default) is Retina at 30 fps;
+*Light* renders the display at standard resolution (a quarter of the pixels) at 30 fps for the least work
+on the Mac, with softer text on the iPad.
+
 ## Performance
 
 Measured on an M4 Pro MacBook Pro, macOS 27:

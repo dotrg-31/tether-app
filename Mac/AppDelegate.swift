@@ -2,11 +2,32 @@ import AppKit
 import ServiceManagement
 import CoreGraphics
 
+/// Trade sharpness and smoothness for less work on the Mac.
+enum Quality: String, CaseIterable {
+    case sharp, balanced, light
+    var title: String {
+        switch self {
+        case .sharp: return "Sharp (Retina, 60 fps)"
+        case .balanced: return "Balanced (Retina, 30 fps)"
+        case .light: return "Light (standard resolution, 30 fps)"
+        }
+    }
+    var retina: Bool { self != .light }
+    var fps: Int { self == .sharp ? 60 : 30 }
+    var bitrate: Int { self == .light ? 12_000_000 : (self == .balanced ? 25_000_000 : 40_000_000) }
+
+    static var current: Quality {
+        get { Quality(rawValue: UserDefaults.standard.string(forKey: "quality") ?? "") ?? .balanced }
+        set { UserDefaults.standard.set(newValue.rawValue, forKey: "quality") }
+    }
+}
+
 @main
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private let statusLine = NSMenuItem(title: "Starting…", action: nil, keyEquivalent: "")
     private let accessibilityItem = NSMenuItem(title: "Allow touch control…", action: #selector(askAccessibility), keyEquivalent: "")
+    private let qualityItem = NSMenuItem(title: "Quality", action: nil, keyEquivalent: "")
     private let loginItem = NSMenuItem(title: "Start at Login", action: #selector(toggleLogin), keyEquivalent: "")
     private let statsItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
     private var lastStats = Date()
@@ -54,6 +75,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(accessibilityItem)
         menu.addItem(.separator())
         loginItem.target = self
+        let qualityMenu = NSMenu()
+        for q in Quality.allCases {
+            let item = NSMenuItem(title: q.title, action: #selector(chooseQuality(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = q.rawValue
+            qualityMenu.addItem(item)
+        }
+        qualityItem.submenu = qualityMenu
+        menu.addItem(qualityItem)
+        refreshQualityItems()
         menu.addItem(loginItem)
         menu.addItem(NSMenuItem(title: "Quit Tether", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         statusItem.menu = menu
@@ -84,6 +115,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Off unless the user turns it on from the menu; shows up in System Settings > General > Login Items.
     private func refreshLoginItem() {
         loginItem.state = SMAppService.mainApp.status == .enabled ? .on : .off
+    }
+
+    private func refreshQualityItems() {
+        for item in qualityItem.submenu?.items ?? [] {
+            item.state = (item.representedObject as? String) == Quality.current.rawValue ? .on : .off
+        }
+    }
+
+    /// Applying a new quality restarts the stream; the iPad reconnects within a couple of seconds.
+    @objc private func chooseQuality(_ sender: NSMenuItem) {
+        guard let raw = sender.representedObject as? String, let q = Quality(rawValue: raw), q != Quality.current else { return }
+        Quality.current = q
+        refreshQualityItems()
+        session?.close()
     }
 
     @objc private func toggleLogin() {
@@ -181,19 +226,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard let session, display == nil else { return }
         guard let vd = VirtualDisplay(name: hello.deviceName.isEmpty ? "iPad" : hello.deviceName,
                                       pointWidth: hello.pointWidth, pointHeight: hello.pointHeight,
-                                      diagonalInches: Self.estimatedDiagonal(hello)) else {
+                                      diagonalInches: Self.estimatedDiagonal(hello),
+                                      retina: Quality.current.retina) else {
             setStatus("Could not create the virtual display")
             session.close()
             return
         }
         display = vd
         injector = InputInjector { [weak vd] in vd?.bounds ?? .zero }
-        // Encode at the iPad's native pixel size; the display itself renders at 2x.
-        let w = hello.pixelWidth & ~1, h = hello.pixelHeight & ~1
+        // Encode at the display's own pixel size (2x in Retina modes, 1x in Light; the iPad scales it up).
+        let quality = Quality.current
+        let (pw, ph) = vd.pixelSize
+        let w = pw & ~1, h = ph & ~1
         let config = StreamConfig(version: protocolVersion, pixelWidth: w, pixelHeight: h)
         session.send(.streamConfig, (try? JSONEncoder().encode(config)) ?? Data())
 
         let st = ScreenStreamer(displayID: vd.displayID, width: w, height: h, session: session)
+        st.maxFPS = quality.fps
+        st.bitrate = quality.bitrate
         streamer = st
         setStatus("Starting stream to \(hello.deviceName)…")
         Task { @MainActor in

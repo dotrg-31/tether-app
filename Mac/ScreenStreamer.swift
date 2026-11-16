@@ -28,6 +28,9 @@ final class ScreenStreamer: NSObject, SCStreamOutput, SCStreamDelegate {
     private var forceKeyframe = true // only touched on captureQueue
     private var awaitingKeyframe = false // only touched in the (serialized) encoder callback
 
+    /// Frame-rate cap for capture and encoding.
+    var maxFPS = 60
+
     /// Average bitrate in bits per second.
     var bitrate = 40_000_000
 
@@ -70,7 +73,7 @@ final class ScreenStreamer: NSObject, SCStreamOutput, SCStreamDelegate {
         let config = SCStreamConfiguration()
         config.width = width
         config.height = height
-        config.minimumFrameInterval = CMTime(value: 1, timescale: 60)
+        config.minimumFrameInterval = CMTime(value: 1, timescale: CMTimeScale(maxFPS))
         config.pixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
         config.colorMatrix = CGDisplayStream.yCbCrMatrix_ITU_R_709_2
         config.showsCursor = true
@@ -125,7 +128,7 @@ final class ScreenStreamer: NSObject, SCStreamOutput, SCStreamDelegate {
             kVTCompressionPropertyKey_ProfileLevel: kVTProfileLevel_H264_High_AutoLevel,
             kVTCompressionPropertyKey_AllowFrameReordering: false,
             kVTCompressionPropertyKey_AverageBitRate: bitrate,
-            kVTCompressionPropertyKey_ExpectedFrameRate: 60,
+            kVTCompressionPropertyKey_ExpectedFrameRate: maxFPS,
             kVTCompressionPropertyKey_MaxKeyFrameIntervalDuration: 10,
         ]
         for (k, v) in props { VTSessionSetProperty(s, key: k, value: v as CFTypeRef) }
