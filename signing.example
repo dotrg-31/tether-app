@@ -1,0 +1,6 @@
+# Copy to signing.local (not committed) and fill in.
+# Your Apple Development team ID: Xcode > Settings > Accounts > your Apple ID > Team, or the "OU" field of your
+# "Apple Development" certificate in Keychain Access. A free Apple ID works (apps then expire after 7 days).
+TETHER_TEAM_ID=XXXXXXXXXX
+# Bundle ID prefix. Must be unique to you if you sign with your own team, e.g. com.yourname
+TETHER_BUNDLE_PREFIX=com.example

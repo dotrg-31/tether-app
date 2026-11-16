@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1f4a"/><stop offset="1" stop-color="#05061a"/></linearGradient>
+ <radialGradient id="glow" cx="0.5" cy="0.55" r="0.55"><stop offset="0" stop-color="#4f6bff" stop-opacity="0.55"/><stop offset="1" stop-color="#4f6bff" stop-opacity="0"/></radialGradient>
+ <linearGradient id="scr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fd3ff"/><stop offset="0.5" stop-color="#4b5dff"/><stop offset="1" stop-color="#8a2be2"/></linearGradient>
+ <linearGradient id="scr2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9cf6ff"/><stop offset="0.6" stop-color="#3fb8ff"/><stop offset="1" stop-color="#3a46d8"/></linearGradient>
+ <linearGradient id="frame" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9ecff"/><stop offset="1" stop-color="#7b82b8"/></linearGradient>
+ <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.55"/><stop offset="0.5" stop-color="#fff" stop-opacity="0.05"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+ <linearGradient id="cable" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7fd3ff"/><stop offset="1" stop-color="#d36bff"/></linearGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="14"/></filter>
+ <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#000" flood-opacity="0.6"/></filter>
+</defs>
+<rect x="64" y="64" width="896" height="896" rx="200" fill="url(#bg)"/>
+<rect x="64" y="64" width="896" height="896" rx="200" fill="url(#glow)"/>
+<rect x="66" y="66" width="892" height="892" rx="198" fill="none" stroke="#8e9cff" stroke-opacity="0.35" stroke-width="4"/>
+<path d="M440 690 C 480 800, 600 800, 650 700" stroke="url(#cable)" stroke-width="22" fill="none" stroke-linecap="round" filter="url(#blur)" opacity="0.9"/>
+<path d="M440 690 C 480 800, 600 800, 650 700" stroke="url(#cable)" stroke-width="12" fill="none" stroke-linecap="round"/>
+<g filter="url(#shadow)">
+ <rect x="150" y="300" width="420" height="320" rx="34" fill="url(#frame)"/>
+ <rect x="168" y="318" width="384" height="284" rx="20" fill="url(#scr)"/>
+ <rect x="168" y="318" width="384" height="140" rx="20" fill="url(#gloss)"/>
+ <rect x="310" y="620" width="100" height="70" fill="#9aa1d0"/>
+ <rect x="250" y="684" width="220" height="22" rx="11" fill="url(#frame)"/>
+</g>
+<g filter="url(#shadow)">
+ <rect x="600" y="390" width="270" height="330" rx="38" fill="#1c1f3a" stroke="url(#frame)" stroke-width="10"/>
+ <rect x="620" y="410" width="230" height="290" rx="22" fill="url(#scr2)"/>
+ <rect x="620" y="410" width="230" height="130" rx="22" fill="url(#gloss)"/>
+</g>
+</svg>
