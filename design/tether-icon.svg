@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#131040"/><stop offset="0.55" stop-color="#07061c"/><stop offset="1" stop-color="#02020a"/></linearGradient>
+ <linearGradient id="warp" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#00e5ff" stop-opacity="0.15"/><stop offset="0.5" stop-color="#4f7bff" stop-opacity="0.55"/><stop offset="1" stop-color="#c23dff" stop-opacity="0.85"/></linearGradient>
+ <linearGradient id="mon" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8af4ff"/><stop offset="1" stop-color="#2f6bff"/></linearGradient>
+ <linearGradient id="pad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5df2ff"/><stop offset="0.45" stop-color="#5b4dff"/><stop offset="1" stop-color="#ff3df2"/></linearGradient>
+ <linearGradient id="gloss" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.65"/><stop offset="0.45" stop-color="#fff" stop-opacity="0.08"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+ <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#7a6cff"/></linearGradient>
+ <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6e9ff"/><stop offset="1" stop-color="#7d84b8"/></linearGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="24"/></filter>
+ <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#000" flood-opacity="0.7"/></filter>
+ <clipPath id="tile"><rect x="64" y="64" width="896" height="896" rx="200"/></clipPath>
+</defs>
+<rect x="64" y="64" width="896" height="896" rx="200" fill="url(#bg)"/>
+<g clip-path="url(#tile)">
+ <circle cx="700" cy="500" r="290" fill="#5b4dff" opacity="0.4" filter="url(#blur)"/>
+ <circle cx="290" cy="470" r="200" fill="#00c8ff" opacity="0.22" filter="url(#blur)"/>
+ <!-- warp ribbon: monitor screen edges flowing into the tablet edges -->
+ <path d="M370 352 C 470 330, 520 250, 590 238 L 640 742 C 560 700, 480 600, 370 560 Z" fill="url(#warp)"/>
+ <g fill="none" stroke-linecap="round">
+  <path d="M370 395 C 470 380, 530 320, 600 320" stroke="#9ff6ff" stroke-opacity="0.55" stroke-width="5" filter="url(#soft)"/>
+  <path d="M370 440 C 470 440, 535 420, 612 420" stroke="#9ff6ff" stroke-opacity="0.5" stroke-width="5"/>
+  <path d="M370 485 C 470 500, 540 520, 622 525" stroke="#d9a8ff" stroke-opacity="0.5" stroke-width="5"/>
+  <path d="M370 525 C 470 560, 545 620, 630 630" stroke="#ff8af2" stroke-opacity="0.55" stroke-width="5" filter="url(#soft)"/>
+ </g>
+</g>
+<!-- monitor -->
+<g filter="url(#shadow)">
+ <rect x="120" y="330" width="270" height="250" rx="28" fill="url(#metal)"/>
+ <rect x="134" y="344" width="242" height="200" rx="16" fill="url(#mon)"/>
+ <rect x="134" y="344" width="242" height="200" rx="16" fill="url(#gloss)"/>
+ <rect x="226" y="580" width="58" height="62" fill="#8d94c6"/>
+ <rect x="186" y="636" width="138" height="20" rx="10" fill="url(#metal)"/>
+</g>
+<!-- tablet -->
+<g filter="url(#shadow)" transform="rotate(-6 690 490)">
+ <rect x="560" y="215" width="330" height="540" rx="54" fill="url(#rim)"/>
+ <rect x="577" y="232" width="296" height="506" rx="40" fill="url(#pad)"/>
+ <rect x="577" y="232" width="296" height="506" rx="40" fill="url(#gloss)"/>
+ <rect x="615" y="285" width="150" height="16" rx="8" fill="#fff" opacity="0.75"/>
+ <rect x="615" y="317" width="100" height="16" rx="8" fill="#fff" opacity="0.45"/>
+</g>
+<rect x="66" y="66" width="892" height="892" rx="198" fill="none" stroke="#a08cff" stroke-opacity="0.3" stroke-width="4"/>
+</svg>
